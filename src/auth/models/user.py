@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
 from sqlalchemy import Column, DateTime, Enum, String ,UUID
-from src.auth.enums import AuthMethods
+from src.auth.enums import AuthMethods, Roles
 from config.db import Base
 
 class User(Base):
@@ -14,6 +14,7 @@ class User(Base):
     first_name = Column(String)
     last_name = Column(String)
     email = Column(String)
+    role = Column(Enum(Roles,name="role"))
     phone_number = Column(String)
 
     password = Column(String, nullable=True)
