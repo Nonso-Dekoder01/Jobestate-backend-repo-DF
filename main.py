@@ -2,13 +2,15 @@ from fastapi import APIRouter,FastAPI
 
 from config.db import Base, engine
 from src.auth.routers import auth_router
+from src.jobs.routers import jobs_router
 
-# Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
 app_router = APIRouter(prefix="/api")
 app_router.include_router(auth_router)
+app_router.include_router(jobs_router)
 
 app.include_router(app_router)
 
