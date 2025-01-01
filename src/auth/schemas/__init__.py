@@ -1,5 +1,13 @@
+from .auth import (
+    LoginSchema,
+    RegisterSchema
+)
+
 from .user import (
-    CreateUser, 
+    CreateUser,
+    DataInToken,
     GoogleOauthUserResponse,
-    NewUserFromGoogle
+    NewUserFromGoogle,
+    LoginResponse,
+    UserSchema
 )
