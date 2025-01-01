@@ -17,7 +17,7 @@ class Job(Base):
     job_type = Column(Enum(JobTypes, name="job_types"), nullable=False) 
     salary_period = Column(Enum(SalaryPeriod, name="salary_period"), nullable=False)
     status = Column(Enum(JobStatus), default=JobStatus.ACTIVE)
-    job_categories = relationship("JobCategory", secondary="job_categories_association")
+    job_categories = relationship("JobCategory", secondary="job_categories_association", back_populates="jobs")
 
     
 
@@ -26,7 +26,7 @@ class JobCategory(Base):
     
     id_ = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
-    jobs = relationship("Job", secondary="job_categories_association")
+    jobs = relationship("Job", secondary="job_categories_association", back_populates="job_categories")
     
 
 class JobCategoryAssociation(Base):
