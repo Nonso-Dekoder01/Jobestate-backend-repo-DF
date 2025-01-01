@@ -1,9 +1,16 @@
 from uuid import UUID
-from fastapi import HTTPException
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
-from src.auth.schemas.user import CreateUser
+from src.auth.enums import Roles
+
+from src.auth.schemas.user import CreateUser, DataInToken
 from src.auth.models import User
+
+from .password import PasswordService
+from .token import TokenService
+
 
 class UserService:
     """
@@ -85,6 +92,12 @@ class UserService:
         try:
             user = User(**payload.model_dump())
 
+            # TODO: Add methods to check if email 
+            # or phone number is already taken.
+            if payload.password:
+                password = PasswordService.hash_password(payload.password)
+                user.password = password.decode("utf-8")
+            
             db.add(user)
             db.commit()
             db.refresh(user)
@@ -92,4 +105,50 @@ class UserService:
             return user
         except Exception as exc:
             db.rollback()
+            raise exc
+        
+    
+    @staticmethod
+    async def is_admin(
+        user_id: UUID,
+        db: Session
+    ):
+        """
+            Checks if a user is an admin or not
+            and returns a boolean to that effect.
+        """
+        try:
+            user = await UserService.find_by_id(user_id, db)
+
+            if user.role == Roles.ADMIN:
+                return True
+            
+            return False
+        except Exception as exc:
+            raise exc
+        
+
+    
+    @staticmethod
+    async def get_current_user(
+        credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer())
+    ):
+        try:
+            return DataInToken.model_validate(TokenService.decode_token(credentials.credentials))
+        except Exception as exc:
+            raise exc
+        
+    
+    @staticmethod
+    async def check_admin_token(
+        credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer())
+    ):
+        try:
+            user = await UserService.get_current_user(credentials)
+            if user.user.role != Roles.ADMIN:
+                raise HTTPException(
+                    401,
+                    f"You must be an admin to perform this task"
+                )
+        except Exception as exc:
             raise exc
