@@ -1,19 +1,26 @@
 from os import getenv
+from fastapi import HTTPException
 import requests
 
 from dotenv import load_dotenv
-from jose import jwt
 from sqlalchemy.orm import Session
 
 
 from src.auth.enums import AuthMethods
 from src.auth.schemas import (
     CreateUser,
+    DataInToken,
     GoogleOauthUserResponse,
-    NewUserFromGoogle
+    LoginSchema,
+    LoginResponse,
+    NewUserFromGoogle,
+    RegisterSchema,
+    UserSchema
 )
-from .user import UserService
 
+from .password import PasswordService
+from .user import UserService
+from .token import TokenService
 
 load_dotenv()
 class AuthService:
@@ -91,9 +98,54 @@ class AuthService:
             raise exc
 
 
+    # @staticmethod
+    # async def get_token(token: str):
+    #     try:
+    #         return jwt.decode(token, getenv('GOOGLE_CLIENT_SECRET'), algorithms=["HS256"])
+    #     except Exception as exc:
+    #         raise exc
+        
+    
     @staticmethod
-    async def get_token(token: str):
+    async def signup(
+        payload: RegisterSchema,
+        db: Session
+    ):
         try:
-            return jwt.decode(token, getenv('GOOGLE_CLIENT_SECRET'), algorithms=["HS256"])
+            user = await UserService.create(
+                CreateUser(
+                    **payload.model_dump(), 
+                    auth_method=AuthMethods.EMAIL_PASSWORD
+                    ), 
+                db
+            )
+
+            return UserSchema.model_validate(user)
+        except Exception as exc:
+            raise exc
+        
+    
+    @staticmethod
+    async def login(
+        payload: LoginSchema,
+        db: Session
+    ):
+        try:
+            user = await UserService.find_by_email(payload.email, db)
+            if user.auth_method == AuthMethods.GOOGLE:
+                raise HTTPException(
+                    400,
+                    "Login with google instead."
+                )
+            if not PasswordService.check_password(payload.password, user.password):
+                raise HTTPException(
+                    400,
+                    "Incorrect password"
+                )
+            
+            return LoginResponse(
+                user=user,
+                token=await TokenService.create_access_token(DataInToken(user=UserSchema.model_validate(user)))
+            )
         except Exception as exc:
             raise exc
