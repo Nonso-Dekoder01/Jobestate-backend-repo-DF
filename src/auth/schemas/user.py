@@ -1,18 +1,23 @@
+from datetime import datetime
 from typing import Optional
+from uuid import UUID
 from pydantic import BaseModel
 
-from src.auth.enums import AuthMethods
+from src.auth.enums import AuthMethods, Roles
 
 
 class BaseUserSchema(BaseModel):
     """
         Schema model to create a new user
     """
-    first_name: str 
-    last_name: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     email: str
     phone_number: Optional[str] = None
     auth_method: AuthMethods
+
+    class Config:
+        from_attributes = True
 
 
 class CreateUser(BaseUserSchema):
@@ -37,3 +42,26 @@ class GoogleOauthUserResponse(BaseModel):
 class NewUserFromGoogle(BaseUserSchema):
     class Config:
         from_attributes=True
+
+
+
+class LoginResponse(BaseModel):
+    user: BaseUserSchema
+    token: str
+
+
+class UserSchema(BaseUserSchema):
+    id_: UUID | str
+    role: Roles
+    
+    class Config:
+        from_attributes=True
+
+
+
+class DataInToken(BaseModel):
+    user: UserSchema
+    exp: Optional[datetime] = None
+
+    class Config: 
+        from_attributes = True
