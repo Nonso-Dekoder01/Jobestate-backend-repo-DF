@@ -14,7 +14,7 @@ class User(Base):
     first_name = Column(String)
     last_name = Column(String)
     email = Column(String)
-    role = Column(Enum(Roles,name="role"))
+    role = Column(Enum(Roles,name="role"), default=Roles.USER)
     phone_number = Column(String)
 
     password = Column(String, nullable=True)
