@@ -2,6 +2,8 @@ from uuid import UUID
 
 from fastapi import Depends
 from config.db import get_db
+
+from src.auth.services import UserService
 from src.jobs.schemas import JobCreate
 from src.jobs.services import JobsService
 
@@ -34,7 +36,8 @@ class JobsController:
 	@staticmethod
 	async def create(
 		payload: JobCreate,
-		db = Depends(get_db)
+		db = Depends(get_db),
+		user = Depends(UserService.check_admin_token)
 	):
 		try:
 			return await JobsService.create(payload,db)
