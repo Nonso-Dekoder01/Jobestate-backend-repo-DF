@@ -2,6 +2,7 @@ from typing import List
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
+from errors import raise_error
 from src.jobs.models import JobCategory
 
 
@@ -13,7 +14,7 @@ class JobCategoryService:
         try:
             return db.query(JobCategory).all()
         except Exception as exc:
-            raise exc
+            raise_error(exc)
 
 
     @staticmethod
@@ -33,7 +34,7 @@ class JobCategoryService:
             
             return job_category
         except Exception as exc:
-            raise exc
+            raise_error(exc)
         
     
     @staticmethod
@@ -49,4 +50,4 @@ class JobCategoryService:
             
             return job_categories
         except Exception as exc:
-            raise exc
+            raise_error(exc)
