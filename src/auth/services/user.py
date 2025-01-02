@@ -1,10 +1,11 @@
 from uuid import UUID
+
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
+from errors import raise_error
 from src.auth.enums import Roles
-
 from src.auth.schemas.user import CreateUser, DataInToken
 from src.auth.models import User
 
@@ -39,7 +40,7 @@ class UserService:
             
             return user
         except Exception as exc:
-            raise exc
+            raise_error(exc)
         
 
     @staticmethod
@@ -57,7 +58,7 @@ class UserService:
             return db.query(User)\
                 .filter(User.email == email).first()
         except Exception as exc:
-            raise exc
+            raise_error(exc)
     
     @staticmethod
     async def find_by_email(
@@ -80,7 +81,7 @@ class UserService:
             
             return user
         except Exception as exc:
-            raise exc
+            raise_error(exc)
         
 
     
@@ -105,7 +106,7 @@ class UserService:
             return user
         except Exception as exc:
             db.rollback()
-            raise exc
+            raise_error(exc)
         
     
     @staticmethod
@@ -125,7 +126,7 @@ class UserService:
             
             return False
         except Exception as exc:
-            raise exc
+            raise_error(exc)
         
 
     
@@ -136,7 +137,7 @@ class UserService:
         try:
             return DataInToken.model_validate(TokenService.decode_token(credentials.credentials))
         except Exception as exc:
-            raise exc
+            raise_error(exc)
         
     
     @staticmethod
@@ -151,4 +152,4 @@ class UserService:
                     f"You must be an admin to perform this task"
                 )
         except Exception as exc:
-            raise exc
+            raise_error(exc)
