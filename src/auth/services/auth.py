@@ -1,11 +1,11 @@
 from os import getenv
-from fastapi import HTTPException
 import requests
 
 from dotenv import load_dotenv
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-
+from errors import raise_error
 from src.auth.enums import AuthMethods
 from src.auth.schemas import (
     CreateUser,
@@ -31,7 +31,7 @@ class AuthService:
                 "url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={getenv('GOOGLE_CLIENT_ID')}&redirect_uri={getenv('GOOGLE_REDIRECT_UR','http://localhost:8987/api/auth/google')}&scope=openid%20profile%20email&access_type=offline"
             }
         except Exception as exc:
-            raise exc
+            raise_error(exc)
         
 
     
@@ -61,7 +61,7 @@ class AuthService:
             print(user_info.json())
             return GoogleOauthUserResponse(**user_info.json())
         except Exception as exc:
-            raise exc
+            raise_error(exc)
         
 
 
@@ -95,7 +95,7 @@ class AuthService:
             
             return NewUserFromGoogle.model_validate(user)
         except Exception as exc:
-            raise exc
+            raise_error(exc)
 
 
     # @staticmethod
@@ -103,7 +103,7 @@ class AuthService:
     #     try:
     #         return jwt.decode(token, getenv('GOOGLE_CLIENT_SECRET'), algorithms=["HS256"])
     #     except Exception as exc:
-    #         raise exc
+    #         raise_error(exc)
         
     
     @staticmethod
@@ -122,7 +122,7 @@ class AuthService:
 
             return UserSchema.model_validate(user)
         except Exception as exc:
-            raise exc
+            raise_error(exc)
         
     
     @staticmethod
@@ -148,4 +148,4 @@ class AuthService:
                 token=await TokenService.create_access_token(DataInToken(user=UserSchema.model_validate(user)))
             )
         except Exception as exc:
-            raise exc
+            raise_error(exc)
