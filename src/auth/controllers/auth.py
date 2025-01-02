@@ -1,12 +1,15 @@
 from fastapi import Depends
 
 from config.db import get_db
+from errors import parse_error
 
 from src.auth.services import AuthService
 from src.auth.schemas import (
     LoginSchema, 
     RegisterSchema
 )
+
+from response import Response
 
 class AuthController:
     @staticmethod
@@ -16,9 +19,13 @@ class AuthController:
             on the web
         """
         try:
-            return await AuthService.login_google()
+            login_url = await AuthService.login_google()
+            return Response(
+                login_url,
+                message="Url for google auth"
+            )
         except Exception as exc:
-            return str(exc)
+            return parse_error(exc)
         
     
     @staticmethod
@@ -27,9 +34,12 @@ class AuthController:
         db = Depends(get_db)
     ):
         try:
-            return await AuthService.verify_user(code,db)
+            google_user_auth = await AuthService.verify_user(code,db)
+            return Response(
+                google_user_auth,
+            )
         except Exception as exc:
-            return str(exc)
+            return parse_error(exc)
         
     
     @staticmethod
@@ -41,9 +51,12 @@ class AuthController:
             Sign up with email and password
         """
         try:
-            return await AuthService.signup(payload, db)
+            signup_data = await AuthService.signup(payload, db)
+            return Response(
+                signup_data,
+            )
         except Exception as exc:
-            return str(exc)
+            return parse_error(exc)
         
     
     @staticmethod
@@ -52,7 +65,9 @@ class AuthController:
         db = Depends(get_db)
     ):
         try:
-            return await AuthService.login(payload, db)
+            login_data = await AuthService.login(payload, db)
+            return Response(
+                login_data
+            )
         except Exception as exc:
-            print(exc)
-            return str(exc)
+            return parse_error(exc)
