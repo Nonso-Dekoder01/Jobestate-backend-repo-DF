@@ -1,8 +1,11 @@
 from uuid import UUID
 
 from fastapi import Depends
-from config.db import get_db
 
+from config.db import get_db
+from errors import parse_error
+
+from response import Response
 from src.auth.services import UserService
 from src.jobs.schemas import JobCreate
 from src.jobs.services import JobsService
@@ -15,14 +18,17 @@ class JobsController:
 		try:
 			raise NotImplementedError()
 		except Exception as exc:
-			return str(exc)
+			return parse_error(exc)
 
 	@staticmethod
 	async def find_by_id(job_id:UUID, db = Depends(get_db)):
 		try:
-			return await JobsService.find(job_id,db)
+			job = await JobsService.find(job_id,db)
+			return Response(
+				job
+			)
 		except Exception as exc:
-			return str(exc)
+			return parse_error(exc)
 
 
 	@staticmethod
@@ -30,7 +36,7 @@ class JobsController:
 		try:
 			raise NotImplementedError()
 		except Exception as exc:
-			return str(exc)
+			return parse_error(exc)
 
 
 	@staticmethod
@@ -40,14 +46,18 @@ class JobsController:
 		user = Depends(UserService.check_admin_token)
 	):
 		try:
-			return await JobsService.create(payload,db)
+			job = await JobsService.create(payload,db)
+			return Response(
+				job
+			)
 		except Exception as exc:
-			return str(exc)
+			return parse_error(exc)
 
 
 	@staticmethod
 	async def delete( job_id: UUID, db=Depends(get_db)):
 		try:
-			return await JobsService.delete(job_id,db)
+			await JobsService.delete(job_id,db)
+			return Response()
 		except Exception as exc:
-			return str(exc)
+			return parse_error(exc)
