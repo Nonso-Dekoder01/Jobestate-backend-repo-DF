@@ -2,9 +2,10 @@ from uuid import UUID
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
+from errors import raise_error
 from src.jobs.schemas import JobCreate
 from src.jobs.enums import JobStatus
-from src.jobs.models import Job, JobCategory
+from src.jobs.models import Job
 
 from .job_categories import JobCategoryService
 
@@ -18,7 +19,7 @@ class JobsService:
 		try:
 			return db.query(Job).filter_by(Job.id_ == job_id, Job.status.not_in([JobStatus.DELETED])).first()
 		except Exception as exc:
-			raise exc
+			raise_error(exc)
 
 
 	@staticmethod
@@ -33,7 +34,7 @@ class JobsService:
 
 			return job
 		except Exception as exc:
-			raise exc
+			raise_error(exc)
 	
 
 	async def update(job_id):
@@ -64,7 +65,7 @@ class JobsService:
 
 			return job
 		except Exception as exc:
-			raise exc
+			raise_error(exc)
 
 
 	
@@ -76,4 +77,4 @@ class JobsService:
 			db.commit()
 		except Exception as exc:
 			db.rollback()
-			raise exc
+			raise_error(exc)
