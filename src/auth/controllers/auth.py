@@ -1,4 +1,4 @@
-from fastapi import Depends
+from fastapi import BackgroundTasks, Depends
 
 from config.db import get_db
 from errors import parse_error
@@ -45,13 +45,14 @@ class AuthController:
     @staticmethod
     async def signup(
         payload: RegisterSchema,
+        background_tasks: BackgroundTasks,
         db = Depends(get_db)
     ):
         """
             Sign up with email and password
         """
         try:
-            signup_data = await AuthService.signup(payload, db)
+            signup_data = await AuthService.signup(payload, background_tasks, db)
             return Response(
                 signup_data,
             )
