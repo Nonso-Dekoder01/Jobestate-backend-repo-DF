@@ -1,12 +1,15 @@
 from os import getenv
+import os
+import random
 import requests
 
 from dotenv import load_dotenv
-from fastapi import HTTPException
+from fastapi import BackgroundTasks, HTTPException
 from sqlalchemy.orm import Session
 
 from errors import raise_error
-from src.auth.enums import AuthMethods
+from messages.services import EmailService
+from src.auth.enums import AuthMethods, Status as UserStatus
 from src.auth.schemas import (
     CreateUser,
     DataInToken,
@@ -109,18 +112,23 @@ class AuthService:
     @staticmethod
     async def signup(
         payload: RegisterSchema,
+        background_task: BackgroundTasks,
         db: Session
     ):
         try:
-            user = await UserService.create(
-                CreateUser(
-                    **payload.model_dump(), 
-                    auth_method=AuthMethods.EMAIL_PASSWORD
-                    ), 
-                db
-            )
+            # user = await UserService.create(
+            #     CreateUser(
+            #         **payload.model_dump(), 
+            #         auth_method=AuthMethods.EMAIL_PASSWORD
+            #         ), 
+            #     db
+            # )
 
-            return UserSchema.model_validate(user)
+            background_task.add_task(
+                AuthService.send_verification_email,
+                payload.email
+            )
+            # return UserSchema.model_validate(user)
         except Exception as exc:
             raise_error(exc)
         
@@ -137,6 +145,11 @@ class AuthService:
                     400,
                     "Login with google instead."
                 )
+            if user.status != UserStatus.ACTIVE:
+                raise HTTPException(
+                    403,
+                    "This user's account is not active. Please reach out to our customer care if you believe this is an error and you have completed your registration."
+                )
             if not PasswordService.check_password(payload.password, user.password):
                 raise HTTPException(
                     400,
@@ -147,5 +160,25 @@ class AuthService:
                 user=user,
                 token=await TokenService.create_access_token(DataInToken(user=UserSchema.model_validate(user)))
             )
+        except Exception as exc:
+            raise_error(exc)
+
+
+    
+    @staticmethod
+    async def send_verification_email(email: str):
+        try:
+            otp = random.randint(100000,999999)
+            
+            subject = 'Email Verification'
+            
+            html_file_path = os.path.join(os.getcwd(), 'messages','templates', 'verification_email.html')
+            print(html_file_path)
+            with open(html_file_path, 'r') as file:
+                message = file.read()
+                
+            message = message.replace('{{email_six_digits_code}}',str(otp))
+
+            await EmailService.send_email(email, subject, message)
         except Exception as exc:
             raise_error(exc)
