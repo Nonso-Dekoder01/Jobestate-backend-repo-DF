@@ -18,3 +18,14 @@ class Roles(str, Enum):
     """
     ADMIN = "admin"
     USER = "user"
+
+
+class Status(str, Enum):
+    """
+        Possible status the user's account
+        can exist in
+    """
+    PENDING_VERIFICATION = "pending_verification"
+    ACTIVE = "active"
+    DISABLED = "disabled"
+    DELETED = "deleted"
