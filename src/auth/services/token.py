@@ -1,7 +1,10 @@
 from datetime import datetime,timedelta
 import os
+
 from fastapi import HTTPException
 import jwt
+
+from errors import raise_error
 from src.auth.schemas import DataInToken
 
 class TokenService:
@@ -15,7 +18,7 @@ class TokenService:
             data.exp = expires
             return jwt.encode(data.model_dump(), SECRET_KEY, algorithm="HS256")
         except Exception as exc:
-            raise exc
+            raise_error(exc)
         
     
     @staticmethod
