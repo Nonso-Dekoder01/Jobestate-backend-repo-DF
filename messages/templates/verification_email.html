@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Verify Your Email Address</title>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333333;
+        }
+
+        table {
+            border-spacing: 0;
+            width: 100%;
+        }
+
+        td {
+            padding: 0;
+        }
+
+        img {
+            border: 0;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .email-header {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        .email-header img {
+            max-width: 150px;
+        }
+
+        .email-body {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .email-body h1 {
+            font-size: 24px;
+            color: #008000;
+        }
+
+        .email-body p {
+            margin: 15px 0;
+        }
+
+        .verification-code {
+            display: block;
+            background-color: #f4f4f4;
+            font-size: 24px;
+            font-weight: bold;
+            color: #008000;
+            text-align: center;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .app-buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .app-buttons img {
+            max-width: 150px;
+            margin: 0 10px;
+        }
+
+        .email-footer {
+            font-size: 14px;
+            color: #888888;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #dddddd;
+        }
+
+        .social-icons {
+            margin: 20px 0;
+        }
+
+        .social-icons img {
+            width: 30px;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <table role="presentation" class="email-container">
+        <tr>
+            <td class="email-header">
+                <img src="jobstatelogo.png" alt="Jobstate Logo">
+            </td>
+        </tr>
+        <tr>
+            <td class="email-body">
+                <h1>Hello</h1>
+                <p>Thanks for signing up for Job state! To complete your registration, please verify your email
+                    address by entering the code below:</p>
+                <div class="verification-code">
+                    {{email_six_digits_code}}
+
+                </div>
+                <p>Enter the code in the verification field on our app. Please ignore if you haven't requested for this
+                    code</p>
+                <p>Welcome to Jobstate ♡</p>
+                <div class="app-buttons">
+                    <a href="https://play.google.com/store/apps/details?id=marketassist"><img
+                            src="https://yourwebsite.com/google-play.png" alt="Download on Google Play"></a>
+                    <a href="https://apps.apple.com/us/app/yourapp/marketassist"><img src="apple-store.png"
+                            alt="Download on the App Store"></a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="email-footer">
+                <p>Follow us on social media:</p>
+                <div class="social-icons">
+                    <a href="https://facebook.com/mymarketassist"><img src="facebook-icon.png" alt="Facebook"></a>
+                    <a href="https://x.com/mymarketassist"><img src="x-icon.png" alt="X (Twitter)"></a>
+                    <a href="https://instagram.com/marketassist"><img src="instagram-icon.png" alt="Instagram"></a>
+                    <a href="https://linkedin.com/company/marketassist"><img src="linkedin-icon.png" alt="LinkedIn"></a>
+                </div>
+                <p>The Jobstate Team ♡</p>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>
