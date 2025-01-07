@@ -47,7 +47,7 @@ class AuthService:
             "code": code,
             "client_id": getenv('GOOGLE_CLIENT_ID'),
             "client_secret": getenv('GOOGLE_CLIENT_SECRET'),
-            "redirect_uri": getenv('GOOGLE_REDIRECT_UR','http://localhost:8987/api/auth/google'),
+            "redirect_uri": getenv('GOOGLE_REDIRECT_URI','https://jobestate-backend-repo-df.onrender.com/api/auth/google'),
             "grant_type": "authorization_code",
             }
 
