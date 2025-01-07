@@ -40,6 +40,7 @@ class GoogleOauthUserResponse(BaseModel):
 
 
 class NewUserFromGoogle(BaseUserSchema):
+    token: Optional[str] = None
     class Config:
         from_attributes=True
 
