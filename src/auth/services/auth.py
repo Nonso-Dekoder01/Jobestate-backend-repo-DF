@@ -95,8 +95,10 @@ class AuthService:
                     ),
                     db
                 )
-            
-            return NewUserFromGoogle.model_validate(user)
+            response = NewUserFromGoogle.model_validate(user) 
+            response.token = await TokenService.create_access_token(DataInToken(user=UserSchema.model_validate(user)))
+
+            return response
         except Exception as exc:
             raise_error(exc)
 
