@@ -31,7 +31,7 @@ class AuthService:
     async def login_google():
         try:
             return {
-                "url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={getenv('GOOGLE_CLIENT_ID')}&redirect_uri={getenv('GOOGLE_REDIRECT_UR','http://localhost:8987/api/auth/google')}&scope=openid%20profile%20email&access_type=offline"
+                "url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={getenv('GOOGLE_CLIENT_ID')}&redirect_uri={getenv('GOOGLE_REDIRECT_URI','http://localhost:8987/api/auth/google')}&scope=openid%20profile%20email&access_type=offline"
             }
         except Exception as exc:
             raise_error(exc)
