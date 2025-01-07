@@ -5,7 +5,7 @@ from src.auth.controllers import AuthController
 
 auth_router = APIRouter(prefix="/auth")
 
-auth_router.get("")\
+auth_router.get("/google/url")\
     (AuthController.google_auth)
 
 auth_router.post("/signup")\
