@@ -15,6 +15,8 @@ class JobCategoryService:
         try:
             return db.query(JobCategory).all()
         except Exception as exc:
+            print("errror")
+            print(exc)
             raise_error(exc)
 
 
@@ -55,18 +57,12 @@ class JobCategoryService:
 
 
     @staticmethod
-    async def find_by_name(
+    async def get_by_name(
         name: str,
         db: Session
     ):
         try:
             job = db.query(JobCategory).filter_by(name=name.capitalize().strip()).first()
-
-            if not job:
-                raise HTTPException(
-                    404,
-                    f"Job {name} not found"
-                )
 
             return job
         except Exception as exc:
@@ -79,7 +75,11 @@ class JobCategoryService:
         db: Session
     ):
         try:
-            await JobCategoryService.find_by_name(payload.name)
+            if await JobCategoryService.get_by_name(payload.name,db):
+                raise HTTPException(
+                    400,
+                    f"Job category {payload.name} already exists"
+                )
             job = JobCategory(
                 name=payload.name.capitalize().strip()
             )
