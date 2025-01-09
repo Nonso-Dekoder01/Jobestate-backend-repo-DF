@@ -20,11 +20,12 @@ class JobCategoriesController:
         except Exception as exc:
             return parse_error(exc)
         
-
-    async def get(
+    @staticmethod
+    async def get_all_jobs(
         db = Depends(get_db)
     ):
         try:
+            print("HPEP")
             job_categories = await JobCategoryService.get_all(db)
 
             return Response(job_categories)
