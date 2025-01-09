@@ -14,6 +14,9 @@ class JobCreate(BaseModel):
 	job_category_ids: List[int]
 
 
+class JobCategoryCreate(BaseModel):
+	name: str
+
 
 class JobsUpdate(BaseModel):
 	pass
