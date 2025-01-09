@@ -6,7 +6,7 @@ from config.db import get_db
 from errors import parse_error
 
 from response import Response
-from src.auth.services import UserService
+# from src.auth.services import UserService
 from src.jobs.schemas import JobCreate
 from src.jobs.services import JobsService
 
@@ -16,7 +16,8 @@ class JobsController:
 	@staticmethod
 	async def get_all_jobs(db = Depends(get_db)):
 		try:
-			raise NotImplementedError()
+			jobs = await JobsService.get(db)
+			return Response(jobs, message="All jobs")
 		except Exception as exc:
 			return parse_error(exc)
 
@@ -43,12 +44,13 @@ class JobsController:
 	async def create(
 		payload: JobCreate,
 		db = Depends(get_db),
-		user = Depends(UserService.check_admin_token)
+		# user = Depends(UserService.check_admin_token)
 	):
 		try:
 			job = await JobsService.create(payload,db)
 			return Response(
-				job
+				job,
+				message="New job added"
 			)
 		except Exception as exc:
 			return parse_error(exc)
@@ -58,6 +60,6 @@ class JobsController:
 	async def delete( job_id: UUID, db=Depends(get_db)):
 		try:
 			await JobsService.delete(job_id,db)
-			return Response()
+			return Response(message="Job deleted")
 		except Exception as exc:
 			return parse_error(exc)
