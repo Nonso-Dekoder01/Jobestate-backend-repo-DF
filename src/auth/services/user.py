@@ -3,9 +3,10 @@ from uuid import UUID
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 
 from errors import raise_error
-from src.auth.enums import Roles
+from src.auth.enums import Roles, Status as UserStatus
 from src.auth.schemas.user import CreateUser, DataInToken
 from src.auth.models import User
 
@@ -84,6 +85,18 @@ class UserService:
             raise_error(exc)
         
 
+    async def get_user(
+        email: str|None,
+        phone_number: str|None,
+        db: Session
+    ):
+        """
+            Checks the database to see if the user exists.
+        """
+        try:
+            return db.query(User).filter(or_(User.email == email, User.phone_number == phone_number)).first()
+        except Exception as exc:
+            raise_error(exc)
     
     @staticmethod
     async def create(
@@ -91,14 +104,24 @@ class UserService:
         db: Session
     ):
         try:
+            existing_user = await UserService.get_user(
+                payload.email,
+                payload.phone_number,
+                db
+            )
+            if existing_user:
+                raise HTTPException(
+                    400,
+                    "This user already exists"
+                )
+            
             user = User(**payload.model_dump())
 
-            # TODO: Add methods to check if email 
-            # or phone number is already taken.
             if payload.password:
                 password = PasswordService.hash_password(payload.password)
                 user.password = password.decode("utf-8")
-            
+            user.status = UserStatus.ACTIVE
+
             db.add(user)
             db.commit()
             db.refresh(user)
