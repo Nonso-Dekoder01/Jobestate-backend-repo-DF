@@ -118,19 +118,19 @@ class AuthService:
         db: Session
     ):
         try:
-            # user = await UserService.create(
-            #     CreateUser(
-            #         **payload.model_dump(), 
-            #         auth_method=AuthMethods.EMAIL_PASSWORD
-            #         ), 
-            #     db
-            # )
-
-            background_task.add_task(
-                AuthService.send_verification_email,
-                payload.email
+            user = await UserService.create(
+                CreateUser(
+                    **payload.model_dump(), 
+                    auth_method=AuthMethods.EMAIL_PASSWORD
+                    ), 
+                db
             )
-            # return UserSchema.model_validate(user)
+
+            # background_task.add_task(
+            #     AuthService.send_verification_email,
+            #     payload.email
+            # )
+            return UserSchema.model_validate(user)
         except Exception as exc:
             raise_error(exc)
         
@@ -141,7 +141,12 @@ class AuthService:
         db: Session
     ):
         try:
-            user = await UserService.find_by_email(payload.email, db)
+            user = await UserService.get_user(payload.email_or_phone_number, payload.email_or_phone_number,db)
+            if not user:
+                raise HTTPException(
+                    400,
+                    f"User {payload.email_or_phone_number} not found."
+                )
             if user.auth_method == AuthMethods.GOOGLE:
                 raise HTTPException(
                     400,
