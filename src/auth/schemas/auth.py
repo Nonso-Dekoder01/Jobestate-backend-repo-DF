@@ -6,7 +6,7 @@ class LoginSchema(BaseModel):
     """
         Schema for user to login
     """
-    email: str
+    email_or_phone_number: str
     password: str
 
 
