@@ -25,7 +25,6 @@ class JobCategoriesController:
         db = Depends(get_db)
     ):
         try:
-            print("HPEP")
             job_categories = await JobCategoryService.get_all(db)
 
             return Response(job_categories)
