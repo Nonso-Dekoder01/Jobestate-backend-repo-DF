@@ -1,4 +1,5 @@
 from fastapi import Depends
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from config.db import get_db
 from errors import parse_error
@@ -11,7 +12,8 @@ class JobCategoriesController:
     @staticmethod
     async def create(
         payload: JobCategoryCreate,
-        db = Depends(get_db)
+        db = Depends(get_db),
+        credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer())
     ):
         try:
             job_category = await JobCategoryService.create(payload,db)

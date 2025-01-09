@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from fastapi import Depends
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from config.db import get_db
 from errors import parse_error
@@ -33,7 +34,11 @@ class JobsController:
 
 
 	@staticmethod
-	async def update(job_id: UUID):
+	async def update(
+		job_id: UUID,
+        credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer())
+		
+		):
 		try:
 			raise NotImplementedError()
 		except Exception as exc:
@@ -44,6 +49,7 @@ class JobsController:
 	async def create(
 		payload: JobCreate,
 		db = Depends(get_db),
+        credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer())
 		# user = Depends(UserService.check_admin_token)
 	):
 		try:
@@ -57,7 +63,11 @@ class JobsController:
 
 
 	@staticmethod
-	async def delete( job_id: UUID, db=Depends(get_db)):
+	async def delete( 
+		job_id: UUID, 
+		db=Depends(get_db),
+        credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer())
+		):
 		try:
 			await JobsService.delete(job_id,db)
 			return Response(message="Job deleted")
