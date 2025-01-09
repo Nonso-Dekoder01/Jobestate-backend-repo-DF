@@ -24,6 +24,7 @@ async def validation_exception_handler_main(request:Request, exc: RequestValidat
     return validation_exception_handler(exc)
 
 
+app.get("/")(lambda:{"message":"Welcome to the job state API"})
 
 # To start, you can use
 # python main.py or
