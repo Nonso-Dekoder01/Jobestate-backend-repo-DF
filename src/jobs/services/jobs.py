@@ -17,10 +17,19 @@ class JobsService:
 			db: Session
 	) -> Job|None:
 		try:
-			return db.query(Job).filter_by(Job.id_ == job_id, Job.status.not_in([JobStatus.DELETED])).first()
+			return db.query(Job).filter(Job.id_ == job_id, Job.status.not_in([JobStatus.DELETED])).first()
 		except Exception as exc:
 			raise_error(exc)
 
+
+	@staticmethod
+	async def get(
+		db: Session
+	):
+		try:
+			return db.query(Job).filter(Job.status.not_in([JobStatus.DELETED])).all()
+		except Exception as exc:
+			raise_error(exc)
 
 	@staticmethod
 	async def find(job_id: UUID, db: Session) -> Job:
@@ -46,6 +55,7 @@ class JobsService:
 		try:
 			job_categories = await JobCategoryService\
 				.bulk_find(payload.job_category_ids,db)
+			
 			job = Job(
 				title=payload.title,
 				description=payload.description,
