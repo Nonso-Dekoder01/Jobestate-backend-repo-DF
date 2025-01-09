@@ -67,7 +67,7 @@ class JobsService:
 			)
 
 			db.add(job)
-			db.commit(job)
+			db.commit()
 
 			job.job_categories = job_categories
 			
