@@ -8,7 +8,10 @@ from errors import parse_error
 
 from response import Response
 # from src.auth.services import UserService
-from src.jobs.schemas import JobCreate
+from src.jobs.schemas import (
+    JobCreate,
+	JobsUpdate
+)
 from src.jobs.services import JobsService
 
 
@@ -36,11 +39,21 @@ class JobsController:
 	@staticmethod
 	async def update(
 		job_id: UUID,
-        credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer())
-		
+		payload: JobsUpdate,
+        credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer()),
+		db = Depends(get_db)
 		):
+		"""
+			Update a job
+		"""
 		try:
-			raise NotImplementedError()
+			updated_job = await JobsService.update(
+				job_id,
+				payload,
+				db
+			)
+
+			return Response(updated_job)
 		except Exception as exc:
 			return parse_error(exc)
 
@@ -52,6 +65,10 @@ class JobsController:
         credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer())
 		# user = Depends(UserService.check_admin_token)
 	):
+		"""
+			Creates a new job 
+			Below are the specified parameters
+		"""
 		try:
 			job = await JobsService.create(payload,db)
 			return Response(
@@ -68,6 +85,9 @@ class JobsController:
 		db=Depends(get_db),
         credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer())
 		):
+		"""
+			Delete a job 
+		"""
 		try:
 			await JobsService.delete(job_id,db)
 			return Response(message="Job deleted")
