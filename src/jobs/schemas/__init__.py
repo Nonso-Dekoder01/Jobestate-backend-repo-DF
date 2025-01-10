@@ -1,1 +1,5 @@
-from .jobs import JobCreate, JobCategoryCreate
+from .jobs import (
+    JobCreate, 
+    JobCategoryCreate,
+    JobsUpdate
+)
