@@ -107,7 +107,13 @@ class JobsService:
 				.bulk_find(payload.job_category_ids,db)
 			
 			job = Job(
-				**payload.model_dump()
+				title=payload.title,
+				description=payload.description,
+				minimum_salary=payload.minimum_salary,
+				maximum_salary=payload.maximum_salary,
+				company_name=payload.company_name,
+				job_type=payload.job_type,
+				salary_period=payload.salary_period,
 			)
 
 			db.add(job)
