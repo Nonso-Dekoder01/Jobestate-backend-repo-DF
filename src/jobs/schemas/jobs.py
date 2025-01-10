@@ -4,6 +4,9 @@ from pydantic import BaseModel
 from src.jobs.enums import JobTypes, SalaryPeriod
 
 class JobCreate(BaseModel):
+	"""
+		Schema to create a job
+	"""
 	title: str
 	description: str
 	minimum_salary: float
@@ -15,8 +18,21 @@ class JobCreate(BaseModel):
 
 
 class JobCategoryCreate(BaseModel):
+	"""
+		Schema to create a job category
+	"""
 	name: str
 
 
-class JobsUpdate(BaseModel):
-	pass
+class JobsUpdate(JobCreate):
+	"""
+		Schema to update a job
+	"""
+	title: Optional[str] = None
+	description: Optional[str] = None
+	minimum_salary: Optional[str] = None
+	maximum_salary: Optional[str] = None
+	company_name: Optional[str] = None
+	job_type: Optional[str] = None
+	salary_period: Optional[SalaryPeriod] = None
+	job_category_ids: Optional[List[int]] = None
