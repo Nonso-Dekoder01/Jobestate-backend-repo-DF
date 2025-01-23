@@ -1,5 +1,8 @@
+from os import getenv
 from fastapi import APIRouter,FastAPI, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
+
 
 from config.db import Base, engine
 from errors import validation_exception_handler
@@ -11,6 +14,14 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 app_router = APIRouter(prefix="/api")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[getenv('FRONTEND_URL'), getenv('LOCALHOST'), '*'],
+    allow_credentials=True,
+    allow_methods=["POST", "PATCH", "DELETE", "GET", "PUT", "OPTIONS"],
+    allow_headers=["*"], # This allows all headers
+)
 
 app_router.include_router(auth_router, tags=["Authentication"])
 app_router.include_router(job_categories_router, tags=["Job Categories"])
