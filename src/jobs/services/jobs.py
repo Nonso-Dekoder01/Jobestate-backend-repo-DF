@@ -114,6 +114,8 @@ class JobsService:
 				company_name=payload.company_name,
 				job_type=payload.job_type,
 				salary_period=payload.salary_period,
+				responsibility=payload.responsibility,
+				qualifications=payload.qualifications
 			)
 
 			db.add(job)
