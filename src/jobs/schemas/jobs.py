@@ -9,6 +9,8 @@ class JobCreate(BaseModel):
 	"""
 	title: str
 	description: str
+	responsibility: str
+	qualifications: List[str]
 	minimum_salary: float
 	maximum_salary: float
 	company_name: str
