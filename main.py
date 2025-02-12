@@ -7,7 +7,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from config.db import Base, engine
 from errors import validation_exception_handler
 from src.auth.routers import auth_router
-from src.jobs.routers import jobs_router, job_categories_router
+from src.jobs.routers import (
+    education_router,
+    jobs_router, 
+    job_categories_router,
+    work_experience_router
+)
 
 Base.metadata.create_all(bind=engine)
 
@@ -24,8 +29,10 @@ app.add_middleware(
 )
 
 app_router.include_router(auth_router, tags=["Authentication"])
+app_router.include_router(education_router, tags=["Education"])
 app_router.include_router(job_categories_router, tags=["Job Categories"])
 app_router.include_router(jobs_router, tags=["Jobs"])
+app_router.include_router(work_experience_router, tags=["Work Experience"])
 
 
 app.include_router(app_router)
